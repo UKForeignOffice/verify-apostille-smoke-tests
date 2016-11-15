@@ -16,10 +16,10 @@ shared_examples_for "standard happy path" do
     page.should have_content('Verify an apostille')
     page.should have_content('What is the date of the apostille?')
     page.should have_content('What is the apostille number?')
-    fill_in('ApostDay', :with => '15')
-    fill_in('ApostMonth', :with => '07')
-    fill_in('ApostYear', :with => '2016')
-    fill_in('ApostNumber', :with => 'APO-50')
+    fill_in('ApostDay', :with => ENV['TEST_DAY'])
+    fill_in('ApostMonth', :with => ENV['TEST_MONTH'])
+    fill_in('ApostYear', :with => ENV['TEST_YEAR'])
+    fill_in('ApostNumber', :with => ENV['TEST_REFERENCE'])
     click_on 'Verify'
 
     # details
