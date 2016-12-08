@@ -1,50 +1,33 @@
 require 'capybara/rspec'
 require 'capybara-screenshot'
 require 'capybara-screenshot/rspec'
-require 'capybara/poltergeist'
 require 'capybara/mechanize'
 
+appHostUrl = ENV["TEST_URL"] || "http://127.0.0.1:1337"
 
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true
   config.run_all_when_everything_filtered = true
   config.filter_run :focus
-#  config.order = 'random'
-  config.before(:each) do  
-    environmentToTest = ENV['TEST_URL']
-    testUsername = ENV['TEST_USER']
-    testPassword = ENV['TEST_PASS']
-    if has_js
-      switch_platform(environmentToTest, testUsername, testPassword)
-    else
-      switch_platform(environmentToTest, nil, nil)
-      page.driver.browser.agent.add_auth(environmentToTest, testUsername, testPassword)
-    end  
-  end
 end
 
 Capybara.configure do |config|
   config.run_server = false
   config.app = 'app_4_mechanize'
-  config.default_driver = :mechanize 
-  config.javascript_driver = :poltergeist 
+  config.app_host = appHostUrl
+  config.default_driver = :mechanize
+  config.javascript_driver = :selenium
   config.default_wait_time = 30
 end
 
-def has_js 
-  return Capybara.current_driver == Capybara.javascript_driver
+Capybara.register_driver :selenium do |app|
+  require 'selenium/webdriver'
+  Selenium::WebDriver::Firefox::Binary.path = "/opt/firefox/firefox"
+  Capybara::Selenium::Driver.new(app, :browser => :firefox)
 end
 
-def switch_platform(platform, user, pass)
-	page.driver.browser.js_errors = false
-  if (platform.nil? || platform.empty?)
-    fail("TEST_URL not set, cannot run tests")
-  end
-  if (!user.nil? && !user.empty? && !pass.nil? && !pass.empty?)
-    platform = platform.gsub(/:\/\//, "://#{user}:#{pass}@")
-  end
-  platform = platform.sub(/(\/)+$/,'') #Strip trailing /
-  Capybara.app_host = "#{platform}"
+def has_js
+  return Capybara.current_driver == Capybara.javascript_driver
 end
 
 # Public: Wait while the predicate defined by block 

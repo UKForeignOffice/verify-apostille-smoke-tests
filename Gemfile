@@ -1,8 +1,8 @@
 source "https://rubygems.org"
 
 gem "capybara"
-gem "selenium-webdriver"
+gem "selenium-webdriver", '2.53.4'
 gem "rspec"
 gem "capybara-screenshot"
-gem "poltergeist"
+gem "headless"
 gem "capybara-mechanize"
