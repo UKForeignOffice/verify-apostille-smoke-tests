@@ -4,18 +4,17 @@ require 'spec_helper'
 require 'rubygems'
 require 'capybara'
 require 'capybara/dsl'
+require 'headless'
 
 
 shared_examples_for "standard happy path" do
 
+  headless = Headless.new(display: 99, autopick: true, reuse: false, destroy_at_exit: true).start
+
   it "confirms app is functioning correctly" do
 
-    visit "/"
-
-    # verify-apostille
-    page.should have_content('Verify an apostille')
-    page.should have_content('What is the date of the apostille?')
-    page.should have_content('What is the apostille number?')
+    visit '/'
+    # Verify-apostille
     fill_in('ApostDay', :with => ENV['TEST_DAY'])
     fill_in('ApostMonth', :with => ENV['TEST_MONTH'])
     fill_in('ApostYear', :with => ENV['TEST_YEAR'])
